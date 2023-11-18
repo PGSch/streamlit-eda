@@ -18,7 +18,7 @@ return_value = st.sidebar.selectbox(
 
 
 # Data preparation
-@st.cache(ignore_hash=True)
+@st.cache_data
 def load_data():
 
     # Load financial dataset
