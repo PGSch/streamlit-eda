@@ -36,3 +36,18 @@ Are you interested in more Streamlit demos related to financial data?
 Developed by Darío López Padial (Bukosabino).
 
 Please, let me know about any comment or feedback.
+
+
+## Setup
+
+```bash
+mkdir /Users/Patrick/anaconda3/envs/streamlit-eda/etc/conda/activate.d/
+touch /Users/Patrick/anaconda3/envs/streamlit-eda/etc/conda/activate.d/env_vars.sh
+echo "export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python" >> /Users/Patrick/anaconda3/envs/streamlit-eda/etc/conda/activate.d/env_vars.sh
+
+
+
+mkdir /Users/Patrick/anaconda3/envs/streamlit-eda/etc/conda/deactivate.d/
+touch /Users/Patrick/anaconda3/envs/streamlit-eda/etc/conda/deactivate.d/env_vars.sh
+echo "unset PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION" >> /Users/Patrick/anaconda3/envs/streamlit-eda/etc/conda/deactivate.d/env_vars.sh
+```
