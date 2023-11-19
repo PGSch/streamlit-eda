@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 import streamlit as st
 import numpy as np
 import pandas as pd
 import ta
 from PIL import Image
+import yfinance as yf
 
 # Settings
 width_px = 1000
@@ -13,11 +14,13 @@ ta_col_prefix = 'ta_'
 # 1. Streamlit Theme Configuration
 st.set_page_config(layout="wide", page_title="Financial Data Analysis", page_icon="📊")
 
-# 2. Improved Layout and Spacing
+#########################################################
+######################## SIDEBAR ########################
+#########################################################
 col1, col2, col3 = st.columns(3)
 # Sidebar settings header
 with col1:
-    st.sidebar.header("S&S Consulting 2024")
+    st.sidebar.header("Test Consulting 2024")
 
 # Sidebar
 # Load the logo image (replace 'path/to/logo.png' with the actual path or URL to your logo)
@@ -26,24 +29,48 @@ logo = Image.open('./.streamlit/docs/logo.png')
 # Display the logo in the sidebar
 st.sidebar.image(logo, use_column_width=True)
 
+
 # Sidebar settings header
 with col2:
     st.sidebar.header("Settings")
-
-# Dropdown values col2
+# Dropdown response values col2
 rv_periods = st.sidebar.selectbox(
     'How many periods to calculate the return price?',
      [1, 2, 3, 5, 7, 14, 31])
 
-# Dropdown values col3
 rv_noise = st.sidebar.selectbox(
     'Simulate noise (0 is no noise)',
      [0, 1, 2, 3, 4, 5])
 
+rv_ticker = st.sidebar.text_input(
+    "Enter stock symbol:",
+    "")
+if rv_ticker != "":
+    st.write("EDA for ", rv_ticker, ":")
+
+# Create a date range for the dropdown
+today = date.today()
+
+# Create a dropdown to select a date
+rv_days = st.selectbox(
+    "Select lookback days",
+    [7,14,30,60,90,180,365])
+rv_dates = [today - timedelta(days=i) for i in range(rv_days)]  # Adjust the range as needed
 
 
+# Define the ticker symbol and date range
+# start_date = "2020-01-01"
+start_date = rv_dates[-1].strftime("%Y-%m-%d")
+end_date = rv_dates[0].strftime("%Y-%m-%d")
 
+# Fetch historical data using yfinance
+data = yf.download(rv_ticker, start=start_date, end=end_date)
+data.reset_index(inplace=True)
 
+# # Save the data as a CSV file
+# data.to_csv(f"{ticker_symbol}_historical_data.csv",)
+
+    
 
 # Data preparation
 @st.cache_data
