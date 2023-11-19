@@ -7,13 +7,20 @@ To use this library you need a financial time series dataset including `Timestam
 
 # Requirements
 
-* python3.7 version
+* python3.8 version
+
+* streamlit==1.28.2
+* ta==0.11.0
+* protobuf==4.25.1
+* lxml==4.9.3
+* yfinance==0.2.32
 
 
 # Run
 
 ```sh
-pip install streamlit==0.48.1 ta==0.4.5
+conda create -n streamlit-eda python=3.8
+pip install -r requirements.txt
 streamlit run https://raw.githubusercontent.com/bukosabino/streamlit-demo-financial-eda/master/app.py
 ```
 
@@ -33,10 +40,11 @@ Are you interested in more Streamlit demos related to financial data?
 
 # Contact
 
-Developed by Darío López Padial (Bukosabino).
+* Updated and configured by: Patrick Schneider
+
+* Template by: Darío López Padial (Bukosabino).
 
 Please, let me know about any comment or feedback.
-
 
 ## Setup
 
