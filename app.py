@@ -4,17 +4,45 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import ta
-
+from PIL import Image
 
 # Settings
 width_px = 1000
 ta_col_prefix = 'ta_'
 
+# 1. Streamlit Theme Configuration
+st.set_page_config(layout="wide", page_title="Financial Data Analysis", page_icon="📊")
+
+# 2. Improved Layout and Spacing
+col1, col2, col3 = st.columns(3)
+# Sidebar settings header
+with col1:
+    st.sidebar.header("S&S Consulting 2024")
 
 # Sidebar
-return_value = st.sidebar.selectbox(
+# Load the logo image (replace 'path/to/logo.png' with the actual path or URL to your logo)
+logo = Image.open('./.streamlit/docs/logo.png')
+
+# Display the logo in the sidebar
+st.sidebar.image(logo, use_column_width=True)
+
+# Sidebar settings header
+with col2:
+    st.sidebar.header("Settings")
+
+# Dropdown values col2
+rv_periods = st.sidebar.selectbox(
     'How many periods to calculate the return price?',
      [1, 2, 3, 5, 7, 14, 31])
+
+# Dropdown values col3
+rv_noise = st.sidebar.selectbox(
+    'Simulate noise (0 is no noise)',
+     [0, 1, 2, 3, 4, 5])
+
+
+
+
 
 
 # Data preparation
@@ -37,7 +65,18 @@ def load_data():
 df = load_data()
 
 # Prepare target: X Periods Return
-df['y'] = (df['Close'] / df['Close'].shift(return_value) - 1) * 100
+df['y'] = (df['Close'] / df['Close'].shift(rv_periods) - 1) * 100
+
+if rv_noise>0:
+    # Define the standard deviation of the noise
+    # This determines how much noise you want to add
+    noise_level = rv_noise/100
+
+    # Add noise to the 'High' and 'Low' columns
+    df['High'] += np.random.normal(0, df['High'] * noise_level, df['High'].shape)
+    df['Low'] += np.random.normal(0, df['Low'] * noise_level, df['Low'].shape)
+    df['Close_Noise'] = df['Close']+np.random.normal(0, df['Low'] * noise_level, df['Low'].shape)
+
 
 # Clean NaN values
 df = df.dropna()
@@ -54,17 +93,26 @@ st.write('We start with an OHLCV financial dataset, and we get some technical an
          'graphically.')
 
 st.subheader('Dataframe')
-st.write(df)
+st.write(df.head())
 
 st.subheader('Describe dataframe')
 st.write(df.describe())
 
 st.write('Number of rows: {}, Number of columns: {}'.format(*df.shape))
 
-st.subheader('Price')
-st.line_chart(df['Close'], width=width_px)
+st.subheader('Close Price')
+if rv_noise>0:
+    # Combine both 'Close' and 'Close_Noise' into a single DataFrame for plotting
+    plot_data = df[['Close_Noise', 'Close']]
+    st.line_chart(plot_data, width=width_px, color=["#FF0000","#0000FF"])
+else:
+    st.line_chart(df['Close'], width=width_px, color="#0000FF")
+    
+st.subheader('Open + Close Price')
+plot_data = df[['Open', 'Close']]
+st.line_chart(plot_data, width=width_px, color=["#8532a8","#0000FF"])
 
-st.subheader(f'Return {return_value} periods')
+st.subheader(f'Return {rv_periods} periods')
 st.area_chart(df['y'], width=width_px)
 
 st.subheader('Target Histogram')
