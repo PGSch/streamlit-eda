@@ -2,5 +2,5 @@ streamlit==1.28.2
 ta==0.11.0
 protobuf==4.25.1
 lxml==4.9.3
-yfinance==0.2.32
+yfinance==0.2.35
 
